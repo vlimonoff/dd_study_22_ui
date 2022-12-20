@@ -1,4 +1,4 @@
-import 'package:dd_study_22_ui/data/auth_service.dart';
+import 'package:dd_study_22_ui/data/services/auth_service.dart';
 import 'package:dd_study_22_ui/ui/app_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,17 +7,25 @@ class _ViewModelState {
   final String? login;
   final String? password;
   final bool isLoading;
-  const _ViewModelState({this.login, this.password, this.isLoading = false});
+  final String? errorText;
+  const _ViewModelState({
+    this.login,
+    this.password,
+    this.isLoading = false,
+    this.errorText,
+  });
 
   _ViewModelState copyWith({
     String? login,
     String? password,
     bool isLoading = false,
+    String? errorText,
   }) {
     return _ViewModelState(
       login: login ?? this.login,
       password: password ?? this.password,
       isLoading: isLoading,
+      errorText: errorText ?? this.errorText,
     );
   }
 }
@@ -56,9 +64,15 @@ class _ViewModel extends ChangeNotifier {
       (value) => {state = state.copyWith(isLoading: false)},
     );
 
-    await _authService
-        .auth(state.login, state.password)
-        .then((value) => AppNavigator.toLoader());
+    try {
+      await _authService
+          .auth(state.login, state.password)
+          .then((value) => AppNavigator.toLoader());
+    } on NoNetworkException {
+      state = state.copyWith(errorText: "Нет сети!");
+    } on WrongCredentionalException {
+      state = state.copyWith(errorText: "Неверный логин или пароль");
+    }
   }
 }
 
@@ -89,6 +103,8 @@ class Auth extends StatelessWidget {
               onPressed: viewModel.checkFields() ? viewModel.login : null,
               child: const Text("Login")),
           if (viewModel.state.isLoading) const CircularProgressIndicator(),
+          if (viewModel.state.errorText != null)
+            Text(viewModel.state.errorText!)
         ],
       )),
     )));
