@@ -32,10 +32,6 @@ class _ViewModel extends ChangeNotifier {
   void _logout() async {
     await _authService.logout().then((value) => AppNavigator.toLoader());
   }
-
-  void _refresh() async {
-    await _authService.tryGetUser();
-  }
 }
 
 class App extends StatelessWidget {
@@ -55,8 +51,6 @@ class App extends StatelessWidget {
             : null,
         title: Text(viewModel.user == null ? "Hi" : viewModel.user!.name),
         actions: [
-          IconButton(
-              onPressed: viewModel._refresh, icon: const Icon(Icons.refresh)),
           IconButton(
               onPressed: viewModel._logout,
               icon: const Icon(Icons.exit_to_app)),
