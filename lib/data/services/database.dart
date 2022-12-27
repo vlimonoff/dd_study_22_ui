@@ -42,6 +42,7 @@ class DB {
     if (type == DbModel) {
       throw Exception("Type is REQUIRED");
     }
+    // ignore: prefer_interpolation_to_compose_strings
     return "t_" + (type).toString();
   }
 
@@ -85,7 +86,7 @@ class DB {
   Future<int> insert<T extends DbModel>(T model) async {
     if (model.id == "") {
       var modelmap = model.toMap();
-      modelmap["id"] = Uuid().v4();
+      modelmap["id"] = const Uuid().v4();
       model = _factories[T]!(modelmap);
     }
     return await _db.insert(_dbName(T), model.toMap());
