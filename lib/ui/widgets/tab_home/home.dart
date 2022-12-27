@@ -1,4 +1,3 @@
-import 'package:dd_study_22_ui/data/services/auth_service.dart';
 import 'package:dd_study_22_ui/data/services/data_service.dart';
 import 'package:dd_study_22_ui/data/services/sync_service.dart';
 import 'package:dd_study_22_ui/domain/models/post_model.dart';
@@ -9,7 +8,6 @@ import 'package:provider/provider.dart';
 
 class _ViewModel extends ChangeNotifier {
   BuildContext context;
-  final _authService = AuthService();
   final _dataService = DataService();
   final _lvc = ScrollController();
 

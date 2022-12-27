@@ -15,9 +15,7 @@ class PostDetail extends StatelessWidget {
     var viewModel = context.watch<_ViewModel>();
     return Scaffold(
       appBar: AppBar(),
-      body: Container(
-        child: Text(viewModel.postId ?? "empty"),
-      ),
+      body: Text(viewModel.postId ?? "empty"),
     );
   }
 
