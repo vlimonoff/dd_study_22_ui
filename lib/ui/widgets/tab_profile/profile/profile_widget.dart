@@ -1,5 +1,5 @@
-import 'package:dd_study_22_ui/internal/init_app.dart';
-import 'package:dd_study_22_ui/ui/widgets/roots/app.dart';
+import 'package:dd_study_22_ui/data/services/auth_service.dart';
+import 'package:dd_study_22_ui/ui/navigation/app_navigator.dart';
 import 'package:dd_study_22_ui/ui/widgets/tab_profile/profile/profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -12,16 +12,17 @@ class ProfileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var dtf = DateFormat("dd.MM.yyyy HH:mm");
     var viewModel = context.watch<ProfileViewModel>();
-    var appViewModel = context.read<AppViewModel>();
     var size = MediaQuery.of(context).size;
+    final _authService = AuthService();
 
     return Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // appViewModel.msg = "hi";
-            showModal;
+          onPressed: () async {
+            await _authService
+                .logout()
+                .then((value) => AppNavigator.toLoader());
           },
-          child: Icon(Icons.message),
+          child: const Icon(Icons.message),
         ),
         body: SafeArea(
           child: Center(

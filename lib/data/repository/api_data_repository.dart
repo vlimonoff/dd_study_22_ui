@@ -1,6 +1,7 @@
 import 'package:dd_study_22_ui/data/clients/api_client.dart';
 import 'package:dd_study_22_ui/domain/models/post_model.dart';
 import 'package:dd_study_22_ui/domain/models/refresh_token_request.dart';
+import 'package:dd_study_22_ui/domain/models/register_request.dart';
 import 'package:dd_study_22_ui/domain/models/token_request.dart';
 import 'package:dd_study_22_ui/domain/models/token_response.dart';
 import 'package:dd_study_22_ui/domain/models/user.dart';
@@ -46,4 +47,7 @@ class ApiDataRepository extends ApiRepository {
 
   @override
   Future addAvatarToUser(AttachMeta model) => _api.addAvatarToUser(model);
+
+  @override
+  Future registerUser(RegisterRequest model) => _auth.registerUser(model);
 }

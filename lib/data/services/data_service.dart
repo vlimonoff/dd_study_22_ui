@@ -26,10 +26,12 @@ class DataService {
 
       if (author != null) {
         res.add(PostModel(
-            id: post.id,
-            author: author,
-            contents: contents,
-            description: post.description));
+          id: post.id,
+          author: author,
+          contents: contents,
+          created: post.created,
+          description: post.description,
+        ));
       }
     }
     return res;

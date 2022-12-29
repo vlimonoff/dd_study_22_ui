@@ -1,4 +1,5 @@
 import 'package:dd_study_22_ui/domain/models/post_model.dart';
+import 'package:dd_study_22_ui/domain/models/register_request.dart';
 import 'package:dd_study_22_ui/domain/models/token_response.dart';
 import 'package:dd_study_22_ui/domain/models/user.dart';
 import 'dart:io';
@@ -17,4 +18,6 @@ abstract class ApiRepository {
 
   Future<List<AttachMeta>> uploadTemp({required List<File> files});
   Future addAvatarToUser(AttachMeta model);
+
+  Future registerUser(RegisterRequest model);
 }

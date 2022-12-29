@@ -1,12 +1,14 @@
 import 'package:dd_study_22_ui/ui/widgets/roots/app.dart';
 import 'package:dd_study_22_ui/ui/widgets/roots/auth.dart';
 import 'package:dd_study_22_ui/ui/widgets/roots/loader.dart';
+import 'package:dd_study_22_ui/ui/widgets/roots/register.dart';
 import 'package:flutter/material.dart';
 
 class NavigationRoutes {
   static const loaderWidget = '/';
   static const auth = '/auth';
   static const app = '/app';
+  static const register = "/register";
 }
 
 class AppNavigator {
@@ -27,6 +29,11 @@ class AppNavigator {
         ?.pushNamedAndRemoveUntil(NavigationRoutes.app, (route) => false);
   }
 
+  static Future toRegister() async {
+    return await key.currentState
+        ?.pushNamedAndRemoveUntil(NavigationRoutes.register, (route) => false);
+  }
+
   static Route<dynamic>? onGeneratedRoutes(RouteSettings settings, context) {
     switch (settings.name) {
       case NavigationRoutes.loaderWidget:
@@ -36,6 +43,8 @@ class AppNavigator {
         return PageRouteBuilder(pageBuilder: (_, __, ___) => Auth.create());
       case NavigationRoutes.app:
         return PageRouteBuilder(pageBuilder: (_, __, ___) => App.create());
+      case NavigationRoutes.register:
+        return PageRouteBuilder(pageBuilder: (_, __, ___) => Register.create());
     }
     return null;
   }

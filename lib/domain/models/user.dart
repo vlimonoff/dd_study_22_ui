@@ -11,14 +11,15 @@ class User implements DbModel {
   final String name;
   final String email;
   final DateTime birthDate;
-  final String avatarLink;
+  final String? avatarLink;
 
   User({
     required this.id,
     required this.name,
     required this.email,
     required this.birthDate,
-    required this.avatarLink,
+    this.avatarLink =
+        "/api/Attach/GetUserAvatar/1feb23c5-e03e-4fa3-abde-2e7024bd8fb0",
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

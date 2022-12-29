@@ -11,7 +11,8 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       name: json['name'] as String,
       email: json['email'] as String,
       birthDate: DateTime.parse(json['birthDate'] as String),
-      avatarLink: json['avatarLink'] as String,
+      avatarLink: json['avatarLink'] as String? ??
+          "/api/Attach/GetUserAvatar/1feb23c5-e03e-4fa3-abde-2e7024bd8fb0",
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{

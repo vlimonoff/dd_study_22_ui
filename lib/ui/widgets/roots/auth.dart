@@ -1,6 +1,7 @@
 import 'package:dd_study_22_ui/data/services/auth_service.dart';
 import 'package:dd_study_22_ui/ui/navigation/app_navigator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class _ViewModelState {
@@ -84,31 +85,112 @@ class Auth extends StatelessWidget {
   Widget build(BuildContext context) {
     var viewModel = context.watch<_ViewModel>();
 
+    // return Scaffold(
+    //     body: SafeArea(
+    //         child: Padding(
+    //   padding: const EdgeInsets.symmetric(horizontal: 20),
+    //   child: Center(
+    //       child: Column(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       TextField(
+    //         controller: viewModel.loginTec,
+    //         decoration: const InputDecoration(hintText: "Enter Login"),
+    //       ),
+    //       TextField(
+    //           controller: viewModel.passwTec,
+    //           obscureText: true,
+    //           decoration: const InputDecoration(hintText: "Enter password")),
+    //       ElevatedButton(
+    //           onPressed: viewModel.checkFields() ? viewModel.login : null,
+    //           child: const Text("Login")),
+    //       if (viewModel.state.isLoading) const CircularProgressIndicator(),
+    //       if (viewModel.state.errorText != null)
+    //         Text(viewModel.state.errorText!)
+    //     ],
+    //   )),
+    // )));
+
+    final inputBorder =
+        OutlineInputBorder(borderSide: Divider.createBorderSide(context));
+
     return Scaffold(
-        body: SafeArea(
-            child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Center(
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextField(
-            controller: viewModel.loginTec,
-            decoration: const InputDecoration(hintText: "Enter Login"),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                flex: 2,
+                child: Container(),
+              ),
+              SvgPicture.asset(
+                'assets/img/insta_logo.svg',
+                color: Colors.black,
+                height: 64,
+              ),
+              const SizedBox(height: 64),
+              TextField(
+                controller: viewModel.loginTec,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  hintText: 'Введите E-mail',
+                  border: inputBorder,
+                  focusedBorder: inputBorder,
+                  enabledBorder: inputBorder,
+                  filled: true,
+                  contentPadding: const EdgeInsets.all(8),
+                ),
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              TextField(
+                controller: viewModel.passwTec,
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: 'Введите пароль',
+                  border: inputBorder,
+                  focusedBorder: inputBorder,
+                  enabledBorder: inputBorder,
+                  filled: true,
+                  contentPadding: const EdgeInsets.all(8),
+                ),
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: ElevatedButton(
+                          onPressed:
+                              viewModel.checkFields() ? viewModel.login : null,
+                          child: const Text("Войти"))),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  const Expanded(
+                      child: ElevatedButton(
+                          //
+                          onPressed: AppNavigator.toRegister,
+                          child: Text("Регистрация"))),
+                ],
+              ),
+              Flexible(
+                flex: 3,
+                child: Container(),
+              ),
+              if (viewModel.state.isLoading) const CircularProgressIndicator(),
+              if (viewModel.state.errorText != null)
+                Text(viewModel.state.errorText!),
+            ],
           ),
-          TextField(
-              controller: viewModel.passwTec,
-              obscureText: true,
-              decoration: const InputDecoration(hintText: "Enter password")),
-          ElevatedButton(
-              onPressed: viewModel.checkFields() ? viewModel.login : null,
-              child: const Text("Login")),
-          if (viewModel.state.isLoading) const CircularProgressIndicator(),
-          if (viewModel.state.errorText != null)
-            Text(viewModel.state.errorText!)
-        ],
-      )),
-    )));
+        ),
+      ),
+    );
   }
 
   static Widget create() => ChangeNotifierProvider<_ViewModel>(

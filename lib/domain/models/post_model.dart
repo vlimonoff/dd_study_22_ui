@@ -9,12 +9,14 @@ class PostModel {
   String id;
   String? description;
   User author;
+  DateTime created;
   List<PostContent> contents;
 
   PostModel({
     required this.id,
     this.description,
     required this.author,
+    required this.created,
     required this.contents,
   });
 
