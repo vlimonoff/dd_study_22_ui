@@ -71,9 +71,10 @@ class _ViewModel extends ChangeNotifier {
     } on NoNetworkException {
       state = state.copyWith(errorText: "Нет сети!");
     } on WrongCredentionalException {
-      state = state.copyWith(errorText: "Неверный логин или пароль");
+      state = state.copyWith(errorText: "Неверный логин или пароль!");
     } on ServerException {
-      state = state.copyWith(errorText: "Произошла ошибка на сервере");
+      state = state.copyWith(
+          errorText: "Приносим извинения, произошла ошибка на сервере!");
     }
   }
 }
@@ -122,8 +123,8 @@ class Auth extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Flexible(
-                flex: 2,
                 child: Container(),
+                flex: 2,
               ),
               SvgPicture.asset(
                 'assets/img/insta_logo.svg',
@@ -179,13 +180,22 @@ class Auth extends StatelessWidget {
                           child: Text("Регистрация"))),
                 ],
               ),
+              const SizedBox(
+                height: 20,
+              ),
+              if (viewModel.state.isLoading) const CircularProgressIndicator(),
+              if (viewModel.state.errorText != null)
+                Text(
+                  viewModel.state.errorText!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               Flexible(
                 flex: 3,
                 child: Container(),
               ),
-              if (viewModel.state.isLoading) const CircularProgressIndicator(),
-              if (viewModel.state.errorText != null)
-                Text(viewModel.state.errorText!),
             ],
           ),
         ),

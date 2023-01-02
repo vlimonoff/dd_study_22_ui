@@ -31,6 +31,8 @@ class DataService {
           contents: contents,
           created: post.created,
           description: post.description,
+          commentsCount: post.commentsCount,
+          likesCount: post.likesCount,
         ));
       }
     }

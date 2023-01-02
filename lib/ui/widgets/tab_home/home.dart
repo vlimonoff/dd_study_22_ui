@@ -1,12 +1,15 @@
+import 'package:dd_study_22_ui/data/services/auth_service.dart';
+import 'package:dd_study_22_ui/ui/navigation/app_navigator.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import 'package:dd_study_22_ui/data/services/data_service.dart';
 import 'package:dd_study_22_ui/data/services/sync_service.dart';
 import 'package:dd_study_22_ui/domain/models/post_model.dart';
 import 'package:dd_study_22_ui/internal/config/app_config.dart';
 import 'package:dd_study_22_ui/ui/navigation/tab_navigator.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class _ViewModel extends ChangeNotifier {
   BuildContext context;
@@ -71,6 +74,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     var viewModel = context.watch<_ViewModel>();
     var itemCount = viewModel.posts?.length ?? 0;
+    final _authService = AuthService();
 
     return Scaffold(
         appBar: AppBar(
@@ -84,7 +88,44 @@ class Home extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () {},
-              icon: const Icon(Icons.messenger_outline),
+              icon: const Icon(Icons.arrow_upward_outlined),
+            ),
+            IconButton(
+              onPressed: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Подтверждение'),
+                  content: const Text(
+                      'Вы действительно хотите выйти из аккаунта? Для входа в аккаунт потребуется повторная авторизация.'),
+                  actions: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            await _authService
+                                .logout()
+                                .then((value) => AppNavigator.toLoader());
+                          },
+                          style: const ButtonStyle(
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.black),
+                          ),
+                          child: const Text('Выход'),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'OK'),
+                          child: const Text('Отмена'),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              icon: const Icon(Icons.exit_to_app),
             ),
           ],
         ),
@@ -98,10 +139,12 @@ class Home extends StatelessWidget {
 
               if (posts != null) {
                 var post = posts[listIndex];
-
                 res = GestureDetector(
                   onTap: () => viewModel.toPostDetail(post.id),
-                  child: PostCard(post: post),
+                  child: PostCard(
+                    post: post,
+                    listIndex: listIndex,
+                  ),
                 );
               } else {
                 res = const SizedBox.shrink();
@@ -133,10 +176,14 @@ class PageIndicator extends StatelessWidget {
     List<Widget> widgets = <Widget>[];
 
     for (var i = 0; i < count; i++) {
+      // print(current);
       widgets.add(
         Icon(
           Icons.circle,
-          size: i == (current ?? 0) ? width * 1.4 : width,
+          color: i == (current ?? 0)
+              ? Colors.black.withAlpha(100)
+              : Colors.grey[300],
+          size: 8,
         ),
       );
     }
@@ -150,13 +197,18 @@ class PageIndicator extends StatelessWidget {
 
 class PostCard extends StatelessWidget {
   final PostModel post;
+  final int listIndex;
 
-  const PostCard({Key? key, required this.post}) : super(key: key);
+  const PostCard({
+    Key? key,
+    required this.post,
+    this.listIndex = 0,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var viewModel = context.watch<_ViewModel>();
-    var df = DateFormat("dd.MM.yyyy");
+    var df = DateFormat("dd.MM.yyyy   HH:mm:ss  ");
 
     return Container(
       color: Colors.white,
@@ -237,38 +289,56 @@ class PostCard extends StatelessWidget {
 
                   // Image Section
                 ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.35,
-                  width: double.infinity,
-                  child: PageView.builder(
-                      itemCount: post.contents.length,
-                      itemBuilder: (_, pageIndex) => Container(
-                            color: Colors.white,
-                            child: Image(
-                                image: NetworkImage(
-                                    "$baseUrl${post.contents[pageIndex].contentLink}")),
-                          )),
+                Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.35,
+                      width: double.infinity,
+                      child: PageView.builder(
+                          onPageChanged: (value) =>
+                              viewModel.onPageChanged(listIndex, value),
+                          itemCount: post.contents.length,
+                          itemBuilder: (_, pageIndex) => Container(
+                                color: Colors.white,
+                                child: Image(
+                                    image: NetworkImage(
+                                        "$baseUrl${post.contents[pageIndex].contentLink}")),
+                              )),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    PageIndicator(
+                        count: post.contents.length,
+                        current: viewModel.pager[listIndex]),
+                  ],
                 ),
 
-                // Like and comment section
+                // LIKES AND COMMENTS -------------------------------------------
                 Row(
                   children: [
-                    IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                        )),
-                    IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.comment_outlined,
-                        )),
-                    IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.share,
-                        )),
+                    TextButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                      label: Text(
+                        post.likesCount.toString(),
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    ),
+                    TextButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.comment_outlined,
+                        color: Colors.black,
+                      ),
+                      label: Text(
+                        post.commentsCount.toString(),
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    ),
                     Expanded(
                       child: Align(
                         alignment: Alignment.bottomRight,
@@ -296,15 +366,6 @@ class PostCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DefaultTextStyle(
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                              fontWeight: FontWeight.w800,
-                            ),
-                        child: Text(
-                          '47 likes',
-                          style: Theme.of(context).textTheme.bodyText2,
-                        ),
-                      ),
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.only(
@@ -326,24 +387,39 @@ class PostCard extends StatelessWidget {
                               ]),
                         ),
                       ),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: const Text(
-                            'View all 200 comments',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 )
               ],
             ),
+    );
+  }
+}
+
+class DialogExample extends StatelessWidget {
+  const DialogExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('AlertDialog Title'),
+          content: const Text('AlertDialog description'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'OK'),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ),
+      child: const Text('Show Dialog'),
     );
   }
 }

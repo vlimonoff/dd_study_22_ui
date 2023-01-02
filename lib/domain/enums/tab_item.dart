@@ -1,4 +1,5 @@
 import 'package:dd_study_22_ui/ui/widgets/tab_home/home.dart';
+import 'package:dd_study_22_ui/ui/widgets/tab_newPost/newPost.dart';
 import 'package:dd_study_22_ui/ui/widgets/tab_profile/profile/profile_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -18,5 +19,6 @@ class TabEnums {
   static Map<TabItemEnum, Widget> tabRoots = {
     TabItemEnum.home: Home.create(),
     TabItemEnum.profile: ProfileWidget.create(),
+    TabItemEnum.newPost: NewPost.create(),
   };
 }

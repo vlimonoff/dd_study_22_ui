@@ -10,6 +10,8 @@ CREATE TABLE t_Post(
     ,[description]          TEXT
     ,authorId               TEXT NOT NULL
     ,created                TEXT NOT NULL
+    ,likesCount             INT
+    ,commentsCount          INT
     ,FOREIGN KEY(authorId) REFERENCES t_User(id)
 );
 CREATE TABLE t_PostContent(

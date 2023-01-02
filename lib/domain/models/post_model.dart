@@ -10,6 +10,8 @@ class PostModel {
   String? description;
   User author;
   DateTime created;
+  int commentsCount;
+  int likesCount;
   List<PostContent> contents;
 
   PostModel({
@@ -18,6 +20,8 @@ class PostModel {
     required this.author,
     required this.created,
     required this.contents,
+    this.commentsCount = 0,
+    this.likesCount = 0,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) =>

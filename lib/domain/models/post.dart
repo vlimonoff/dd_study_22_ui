@@ -11,12 +11,16 @@ class Post implements DbModel {
   final String description;
   final String? authorId;
   final DateTime created;
+  final int commentsCount;
+  final int likesCount;
 
   Post({
     required this.id,
     required this.description,
     this.authorId,
     required this.created,
+    this.commentsCount = 0,
+    this.likesCount = 0,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
@@ -33,12 +37,16 @@ class Post implements DbModel {
     String? description,
     String? authorId,
     DateTime? created,
+    int? commentsCount,
+    int? likesCount,
   }) {
     return Post(
       id: id ?? this.id,
       description: description ?? this.description,
       authorId: authorId ?? this.authorId,
       created: created ?? this.created,
+      commentsCount: commentsCount ?? this.commentsCount,
+      likesCount: likesCount ?? this.likesCount,
     );
   }
 }
